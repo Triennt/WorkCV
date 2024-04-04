@@ -14,13 +14,13 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 	@Query("select A.user from ApplyPost A "
 			+ "join Recruitment R on A.recruitment = R "
 			+ "join Company C on R.company = C "
-			+ "where R.company =: currentCompany")
+			+ "where R.company = :currentCompany")
 	List<User> getCandidatesOfCompany(Company currentCompany);
 
 	@Query("select U from User U "
 			+ "join ApplyPost A on A.user = U "
 			+ "join Recruitment R on A.recruitment = R "
-			+ "where R.id =: recruitmentId")
+			+ "where R.id = :recruitmentId")
 	List<User> getCandidatesOfRecruitment(int recruitmentId);
 
 }
