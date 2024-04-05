@@ -124,8 +124,8 @@ public class HomeController {
 	 * @param recruitmentId ID của công việc tuyển dụng cần hiển thị chi tiết.
 	 * @return Tên của view hiển thị chi tiết công việc tuyển dụng ("public/detail-recruitment").
 	 */
-	@GetMapping("/showDeatailRecruitment")
-	  public String showDeatailRecruitment(@SessionAttribute(name="user", required=false) User sessionUser,
+	@GetMapping("/showDetailRecruitment")
+	  public String showDetailRecruitment(@SessionAttribute(name="user", required=false) User sessionUser,
 			  								Model model, 
 			  								@RequestParam("id") int recruitmentId) {
 		  
