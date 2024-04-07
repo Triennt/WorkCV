@@ -8,6 +8,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.triennt.workcv.repository.CvRepo;
 import com.triennt.workcv.repository.RecruitmentRepo;
 import com.triennt.workcv.repository.RoleRepo;
@@ -16,6 +20,7 @@ import com.triennt.workcv.service.CompanyService;
 import com.triennt.workcv.service.UserService;
 import com.triennt.workcv.user.CrmUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,6 +60,11 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RecruitmentRepo recruitmentRepo;
+
+	@Autowired
+	private Storage storage; // Inject the Google Cloud Storage client
+	@Value("${spring.cloud.gcp.storage.bucket-name}")
+	private String bucketName;
 	
 	@Override
 	@Transactional
@@ -129,42 +139,25 @@ public class UserServiceImpl implements UserService {
 	public ResponseEntity<String> updateUserAvatar(User sessionUser, MultipartFile fileUpload, HttpServletRequest request) {
 		
 		try {
-			
-			String uploadsDir = "resources/user/"+ sessionUser.getEmail() +"/avatar/";
-		    String absolutePath =  request.getServletContext().getRealPath(uploadsDir);
-		    String oldFileName = sessionUser.getImage();
-		    
-		    System.out.println("oldFileName: "+oldFileName);
 
-			File dir = new File(absolutePath);
-		    if(! dir.exists())
-		    {
-				System.out.println("create mkdir: "+ dir.mkdirs());
-		    } 
+			String fileName = fileUpload.getOriginalFilename();
 
-        	String fileName = fileUpload.getOriginalFilename();
-			File newFile = new File(absolutePath, fileName);
-			fileUpload.transferTo(newFile);
-			
-			 System.out.println("New fileName: "+fileName);
-			 
-			if(oldFileName != null && !oldFileName.equals("resources/assets/images/default_avatar.jpg") ) {
-		    	File oldFile = new File(request.getServletContext().getRealPath(oldFileName));
-			    if (oldFile.exists())
-			    	oldFile.delete();
-		    }
-			
-			String filePath = uploadsDir + fileName;
-			sessionUser.setImage(filePath);
+			// Tạo thư mục mới (emulated folder)
+			String filePath = "user/" + sessionUser.getEmail() +"/avatar/"+ fileName;
+			BlobId folderBlobId = BlobId.of(bucketName, filePath);
+			BlobInfo folderBlobInfo = BlobInfo.newBuilder(folderBlobId).build();
+			Blob blob = storage.create(folderBlobInfo, fileUpload.getBytes());
+
+			String fileUrl = blob.getMediaLink();
+			sessionUser.setImage(fileUrl);
 			userRepo.save(sessionUser);
 
-            return new ResponseEntity<>(filePath, HttpStatus.OK);
+            return new ResponseEntity<>(fileUrl, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-		
 	}
 	
 	@Override

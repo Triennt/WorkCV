@@ -387,7 +387,8 @@ $(function () {
                                     })
                                     $("#divImage").css("display","block")
                                 }else{
-									$('#avatar').attr('src', contextPath + '/' + urlImage)
+									//$('#avatar').attr('src', contextPath + '/' + urlImage)
+									$('#avatar').attr('src', urlImage)
                                     swal({
                                         title: 'Cập nhật ảnh đại diện thành công!',
                                         /* text: 'Redirecting...', */
