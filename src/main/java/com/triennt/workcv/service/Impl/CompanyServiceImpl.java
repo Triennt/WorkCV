@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import com.triennt.workcv.repository.CompanyRepo;
 import com.triennt.workcv.repository.FollowCompanyRepo;
 import com.triennt.workcv.service.CompanyService;
@@ -32,6 +35,9 @@ public class CompanyServiceImpl implements CompanyService {
 
 	@Autowired
 	FollowCompanyRepo followCompanyRepo;
+
+	@Autowired
+	private SaveFile saveFile;
 
 	@Override
 	@Transactional
@@ -93,24 +99,14 @@ public class CompanyServiceImpl implements CompanyService {
 		
 		try {
 			
-			if(sessionCompany != null) { 
-			String uploadsDir = "resources/user/"+ sessionCompany.getUser().getEmail() +"/logo/";
-			String fileName = fileUpload.getOriginalFilename();
-			String filePath = uploadsDir + fileName;
-		    String absolutePath =  request.getServletContext().getRealPath(uploadsDir);		    
-		    	
-		    SaveFile.saveFileOnServer(absolutePath, fileUpload);
-	    	String oldFileName = sessionCompany.getLogo();
-	    	
-			if(oldFileName != null && !oldFileName.equals("resources/assets/images/default_logo.jpg")) {
-		    	File oldFile = new File(request.getServletContext().getRealPath(oldFileName));
-			    if (oldFile.exists())
-			    	oldFile.delete();
-		    }
+			if(sessionCompany != null) {
+
+				String folderPath = "user/"+ sessionCompany.getUser().getEmail() +"/logo/";
+				String fileUrl = saveFile.saveFileOnCloud(fileUpload, folderPath);
 			
-			sessionCompany.setLogo(filePath);
+			sessionCompany.setLogo(fileUrl);
 			companyRepo.save(sessionCompany);
-			return new ResponseEntity<>(filePath, HttpStatus.OK);
+			return new ResponseEntity<>(fileUrl, HttpStatus.OK);
 			}else {
 				return new ResponseEntity<>("notCompany", HttpStatus.OK);
 			}

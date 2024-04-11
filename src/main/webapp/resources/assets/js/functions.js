@@ -337,7 +337,7 @@ function save(id) {
                                         type: 'error'
                                     })
 								}else{
-									$('#logo').attr('src', contextPath + '/' + urlImage)
+									$('#logo').attr('src',urlImage)
 									document.getElementById('inputLogo').value = urlImage;
                                 }
 
@@ -445,11 +445,11 @@ $(function () {
                                     })
                                 }else{
                                     document.getElementById('cvName').innerHTML = fileName;
-                                    document.getElementById('cvName').href = contextPath + '/' + urlCv ; 
+                                    document.getElementById('cvName').href = urlCv ;
                                     document.getElementById('cvName').target = '_blank';
                                     document.getElementById('buttonDelete').innerHTML = 'Xóa CV';
                                     document.getElementById('cvDelete').innerHTML = fileName;
-                                    document.getElementById('filePathCv').innerHTML = filePathCv;
+                                    document.getElementById('filePathCv').value = urlCv;
 
                                     swal({
                                         title: 'Cập nhật CV thành công!',

@@ -35,7 +35,7 @@
 					<div style="margin-left: 0px" id="divImage">
 						<img id="avatar" height="100" width="100"
 							style="border-radius: 50px"
-							src="${pageContext.request.contextPath}/${sessionScope.user.image != null ? sessionScope.user.image : 'resources/assets/images/default_avatar.jpg'}">
+							src="${sessionScope.user.image}">
 					</div>
 				</div>
 			</div>
@@ -141,7 +141,7 @@
 						<c:if test="${Cv != null}">
 
 							<a id="cvName"
-								href="${pageContext.request.contextPath}/${Cv.filePath}"
+								href="${Cv.filePath}"
 								target="_blank"> ${Cv.fileName} </a>
 							<a id="buttonDelete" href="#"
 								style="color: red; margin-left: 20px" data-toggle="modal"
@@ -291,7 +291,7 @@
 						CV : <span id="cvDelete"></span>
 								</c:if>
 								<div class="modal-footer mt-1">
-									<input id="filePathCv" type="hidden" name="fileName"
+									<input id="filePathCv" type="hidden" name="filePath"
 										value="${Cv.filePath}">
 									<button type="button" class="btn btn-secondary"
 										data-dismiss="modal">Đóng</button>

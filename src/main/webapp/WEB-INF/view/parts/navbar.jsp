@@ -36,7 +36,7 @@
 						<li class="nav-item"><a class="nav-link dropdown-toggle"
 							href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
 							aria-haspopup="true" aria-expanded="false"> <img
-								src="${pageContext.request.contextPath}/${sessionScope.user.image != null ? sessionScope.user.image : 'resources/assets/images/default_avatar.jpg'}"
+								src="${sessionScope.user.image}"
 								alt="User Avatar" class="rounded-circle" width="30" height="30">
 						</a>
 
@@ -73,7 +73,7 @@
 						<li class="nav-item"><a class="nav-link dropdown-toggle"
 							href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
 							aria-haspopup="true" aria-expanded="false"> <img
-								src="${pageContext.request.contextPath}/${sessionScope.user.image != null ? sessionScope.user.image : 'resources/assets/images/default_avatar.jpg'}"
+								src="${sessionScope.user.image}"
 								alt="User Avatar" class="rounded-circle" width="30" height="30">
 						</a>
 

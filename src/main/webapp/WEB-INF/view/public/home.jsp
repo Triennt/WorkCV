@@ -324,7 +324,7 @@
 								<div class="sidebar-box">
 									<div class="border p-2 d-inline-block mr-3 rounded">
 										<img width="100" height="100"
-											src="${pageContext.request.contextPath}/${company.key.logo}"
+											src="${company.key.logo}"
 											alt="Image">
 									</div>
 									<div class="text p-3">
@@ -333,8 +333,7 @@
 												href="${pageContext.request.contextPath}/detailCompany?idCompany=${company.key.id}">${company.key.nameCompany}</a>
 										</h3>
 										<p>
-											<span class="number" style="color: black">${company.value}</span><span>Vị
-												trí ứng tuyển</span>
+											<span class="number" style="color: black">${company.value}</span><span>Đã ứng tuyển</span>
 										</p>
 									</div>
 								</div>

@@ -156,7 +156,7 @@ public class AdminController {
 			return "admin/profile-company";
 		}
 
-		companyEdit.setLogo("resources/assets/images/default_logo.jpg");	
+		companyEdit.setLogo("https://storage.googleapis.com/workcv-data/resources/assets/images/default_logo.jpg");
 		companyEdit.setUser(sessionUser);
 		sessionUser.getStatus().setCreatedCompany(true);
 		

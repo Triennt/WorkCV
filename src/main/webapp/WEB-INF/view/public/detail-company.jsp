@@ -43,7 +43,7 @@
 					<div class="d-flex align-items-center">
 						<div class="border p-2 d-inline-block mr-3 rounded">
 							<img width="100" height="100"
-								src="${pageContext.request.contextPath}/${company.logo}"
+								src="${company.logo}"
 								alt="Image">
 						</div>
 						<div>

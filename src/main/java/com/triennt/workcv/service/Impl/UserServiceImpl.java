@@ -19,6 +19,7 @@ import com.triennt.workcv.repository.UserRepo;
 import com.triennt.workcv.service.CompanyService;
 import com.triennt.workcv.service.UserService;
 import com.triennt.workcv.user.CrmUser;
+import com.triennt.workcv.util.SaveFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -62,9 +63,7 @@ public class UserServiceImpl implements UserService {
 	private RecruitmentRepo recruitmentRepo;
 
 	@Autowired
-	private Storage storage; // Inject the Google Cloud Storage client
-	@Value("${spring.cloud.gcp.storage.bucket-name}")
-	private String bucketName;
+	private SaveFile saveFile;
 	
 	@Override
 	@Transactional
@@ -105,7 +104,7 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(passwordEncoder.encode(crmUser.getPassword()));
 		user.setFullName(crmUser.getFullName());
 		user.setRole(roleRepo.findRoleByRoleName(crmUser.getRoleName()));
-		user.setImage("resources/assets/images/default_avatar.jpg");
+		user.setImage("https://storage.googleapis.com/workcv-data/resources/assets/images/default_avatar.jpg");
 		user.setStatus(new Status(false, false, false));
 
 		userRepo.save(user);
@@ -140,15 +139,9 @@ public class UserServiceImpl implements UserService {
 		
 		try {
 
-			String fileName = fileUpload.getOriginalFilename();
+			String folderPath = "user/" + sessionUser.getEmail() +"/avatar/";
 
-			// Tạo thư mục mới (emulated folder)
-			String filePath = "user/" + sessionUser.getEmail() +"/avatar/"+ fileName;
-			BlobId folderBlobId = BlobId.of(bucketName, filePath);
-			BlobInfo folderBlobInfo = BlobInfo.newBuilder(folderBlobId).build();
-			Blob blob = storage.create(folderBlobInfo, fileUpload.getBytes());
-
-			String fileUrl = blob.getMediaLink();
+			String fileUrl = saveFile.saveFileOnCloud(fileUpload, folderPath);
 			sessionUser.setImage(fileUrl);
 			userRepo.save(sessionUser);
 
@@ -164,40 +157,22 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public ResponseEntity<String> addCv(String uploadsDir, String absolutePath, MultipartFile fileUpload, User sessionUser) {
 		try {
-			
-		    Cv oldCv = cvRepo.getByUser(sessionUser);
+			String fileName = fileUpload.getOriginalFilename();
+			String folderPath = "user/" + sessionUser.getEmail() + "/cv/";
+			String fileUrl = saveFile.saveFileOnCloud(fileUpload, folderPath);
 
-			File dir = new File(absolutePath);
-			if(! dir.exists())
-			{
-				System.out.println("create mkdir: "+ dir.mkdirs());
-			}
-
-        	String fileName = fileUpload.getOriginalFilename();
-			File newFile = new File(absolutePath, fileName);
-			fileUpload.transferTo(newFile);
-			
-			
-		    if(oldCv != null) {
-		    	String oldFileName = oldCv.getFileName();
-		    	File oldFile = new File(absolutePath, oldFileName);
-			    if (oldFile.exists())
-			    	oldFile.delete();
-		    }
-			
-			String filePath = uploadsDir + fileName;
 			Cv cv = cvRepo.getByUser(sessionUser);
 			if(cv == null)
-				cv = new Cv(fileName, filePath, sessionUser);
+				cv = new Cv(fileName, fileUrl, sessionUser);
 			else {
 				cv.setFileName(fileName);
-				cv.setFilePath(filePath);
+				cv.setFilePath(fileUrl);
 				cv.setUser(sessionUser);
 			}
 			cvRepo.save(cv);
-			System.out.println(filePath);
-			
-			return new ResponseEntity<>(filePath, HttpStatus.OK);
+			System.out.println(fileUrl);
+
+			return new ResponseEntity<>(fileUrl, HttpStatus.OK);
 		} catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -242,13 +217,10 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public ResponseEntity<String> deleteCv(HttpServletRequest request, String filePathCv) {
 		try {
-			String absolutePath =  request.getServletContext().getRealPath(filePathCv);
 
-			File oldFile = new File(absolutePath);
-		    if (oldFile.exists())
-		    	oldFile.delete();
-
+			System.out.println("find cv to delete: "+cvRepo.getByFilePath(filePathCv).getFilePath());
 			cvRepo.deleteByFilePath(filePathCv);
+
 			return new ResponseEntity<>("Ok", HttpStatus.OK);
 		} catch(Exception e) {
 			return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);

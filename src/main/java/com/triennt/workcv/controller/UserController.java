@@ -51,6 +51,9 @@ public class UserController {
 	
 	@Autowired
 	SaveJobService saveJobService;
+
+	@Autowired
+	private SaveFile saveFile;
 	
 	/**
 	 * Phương thức này xử lý yêu cầu hiển thị trang hồ sơ người dùng.
@@ -137,7 +140,7 @@ public class UserController {
 	@PostMapping("/deleteCv")
 	public ResponseEntity<String> deleteCv(@RequestParam("filePathCv") String filePathCv,
 											HttpServletRequest request){
-		
+		System.out.println("CV need to delete: "+filePathCv);
 		ResponseEntity<String> response = userService.deleteCv(request, filePathCv);
 
         return response;
@@ -202,18 +205,15 @@ public class UserController {
 		if(fileUpload == null)
 			return new ResponseEntity<>("noCv",HttpStatus.OK);
 
-		String uploadsDir = "resources/applyPost/" + sessionUser.getEmail() + "/recruitment_"+recruitmentId + "/cv/";
-	    String absolutePath =  request.getServletContext().getRealPath(uploadsDir);
-	    String fileNameCv="";
+		String folderPath = "applyPost/" + sessionUser.getEmail() + "/recruitment_"+recruitmentId + "/cv/";
+
 	    
 	    try {
-	    	
-	    	fileNameCv = SaveFile.saveFileOnServer(absolutePath, fileUpload);
-	    	System.out.println(fileNameCv);
+			String fileUrl = saveFile.saveFileOnCloud(fileUpload, folderPath);
 	    	
 	    	Recruitment recruitmentApply = recruitmentService.getRecruitmentById(recruitmentId);
 			ApplyPost applyPost = new ApplyPost();
-			applyPost.setNameCv(uploadsDir + fileNameCv);
+			applyPost.setNameCv(fileUrl);
 			applyPost.setRecruitment(recruitmentApply);
 			applyPost.setUser(sessionUser);
 			applyPost.setText(description);

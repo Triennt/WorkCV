@@ -34,7 +34,7 @@
 					<div style="margin-left: 0px" id="divImage">
 						<img id="logo" height="100" width="100"
 							style="border-radius: 50px"
-							src="${pageContext.request.contextPath}/${company.logo != null ? company.logo : 'resources/assets/images/default_logo.jpg'}">
+							src="${company.logo}">
 					</div>
 				</div>
 			</div>

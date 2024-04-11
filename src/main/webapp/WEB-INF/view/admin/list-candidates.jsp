@@ -54,7 +54,7 @@
 											class="job-post-item p-4 d-block d-lg-flex align-items-start">
 											<div class="border p-2 d-inline-block mr-3 rounded">
 												<img width="100" height="100"
-													src="${pageContext.request.contextPath}/${applyPost.user.image}"
+													src="${applyPost.user.image}"
 													alt="Image">
 											</div>
 											<div class="one-third mb-4 mb-md-0">
@@ -74,7 +74,7 @@
 													</div>
 													<div class="mr-3">
 														<a style="color: #17a2b8;"
-															href="${pageContext.request.contextPath}/${applyPost.nameCv}"
+															href="${applyPost.nameCv}"
 															target="_blank" class="icon-layers"> Xem CV</a>
 													</div>
 												</div>
@@ -103,7 +103,7 @@
 																	<div style="margin-left: 0px" id="divImage">
 																		<img id="avatar" height="100" width="100"
 																			style="border-radius: 50px"
-																			src="${pageContext.request.contextPath}/${applyPost.user.image != null ? applyPost.user.image : 'resources/assets/images/default_avatar.jpg'}">
+																			src="${applyPost.user.image}">
 																	</div>
 																</div>
 															</div>
