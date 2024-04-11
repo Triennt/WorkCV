@@ -333,7 +333,7 @@
 												href="${pageContext.request.contextPath}/detailCompany?idCompany=${company.key.id}">${company.key.nameCompany}</a>
 										</h3>
 										<p>
-											<span class="number" style="color: black">${company.value}</span><span>Đã ứng tuyển</span>
+											<span class="number" style="color: black">${company.value}</span><span>Đã đăng tuyển</span>
 										</p>
 									</div>
 								</div>

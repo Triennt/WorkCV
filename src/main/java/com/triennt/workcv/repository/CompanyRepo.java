@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CompanyRepo extends JpaRepository<Company, Integer> {
 
-	@Query("select C, count(R) "+
+	@Query("select C, count(distinct(R)) "+
 			"from Company C " +
 			"join Recruitment R on R.company = C " +
 			"left join ApplyPost A on A.recruitment = R " +
