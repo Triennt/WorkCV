@@ -72,7 +72,7 @@ create table `recruitment`(
     `address` varchar(255) not null,
     `created_at` date,
     `description` text,
-    `experience` varchar(255),
+    `experience` text,
     `quantity` int(11),
     `recruitment_rank` varchar(255),
     `status` int(11),
@@ -137,3 +137,5 @@ insert into `category`(
     `name`
 ) values ('Python'),('ASP.NET'),('C/C++'),('Java'),('PHP'),('NoteJs'),('Ruby');
 
+-- ALTER TABLE `recruitment`
+-- MODIFY COLUMN `experience` TEXT;
